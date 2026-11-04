@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Home</string>
+    <string name="accessibility_label">Home launcher buttons</string>
+    <string name="accessibility_description">Sends the Home button to this launcher, handles your remote button shortcuts and the idle auto-off timer. It doesn\'t read screen content.</string>
+    <string name="screensaver_label">Photo slideshow</string>
+</resources>

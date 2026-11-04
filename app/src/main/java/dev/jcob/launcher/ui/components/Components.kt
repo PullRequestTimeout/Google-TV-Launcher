@@ -56,6 +56,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Switch
+import androidx.tv.material3.SwitchDefaults
 import androidx.tv.material3.Text
 
 val Ink = Color(0xFFF2EFE9)
@@ -122,7 +123,35 @@ fun ToggleRow(title: String, checked: Boolean, subtitle: String? = null, enabled
         enabled = enabled,
         modifier = Modifier.semantics(mergeDescendants = true) { role = Role.Switch; toggleableState = ToggleableState(checked) },
         onClick = { onToggle(!checked) },
-        trailing = { Switch(checked = checked, onCheckedChange = null, modifier = Modifier.padding(start = 16.dp)) },
+        trailing = {
+            // Follow the row's content colour so the switch stays visible when the row inverts on focus.
+            val content = LocalContentColor.current
+            val behind = if (content == Panel) Ink else Panel
+            Switch(
+                checked = checked,
+                onCheckedChange = null,
+                enabled = enabled,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = behind,
+                    checkedTrackColor = content,
+                    checkedBorderColor = content,
+                    checkedIconColor = content,
+                    uncheckedThumbColor = content,
+                    uncheckedTrackColor = Color.Transparent,
+                    uncheckedBorderColor = content,
+                    uncheckedIconColor = behind,
+                    disabledCheckedThumbColor = behind,
+                    disabledCheckedTrackColor = content,
+                    disabledCheckedBorderColor = content,
+                    disabledCheckedIconColor = content,
+                    disabledUncheckedThumbColor = content,
+                    disabledUncheckedTrackColor = Color.Transparent,
+                    disabledUncheckedBorderColor = content,
+                    disabledUncheckedIconColor = behind,
+                ),
+                modifier = Modifier.padding(start = 16.dp),
+            )
+        },
     )
 }
 

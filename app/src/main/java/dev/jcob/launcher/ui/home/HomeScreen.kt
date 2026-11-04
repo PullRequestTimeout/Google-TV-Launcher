@@ -78,6 +78,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import dev.jcob.launcher.LauncherApp
+import dev.jcob.launcher.data.CardStyle
 import dev.jcob.launcher.data.LaunchableApp
 import dev.jcob.launcher.data.LauncherConfig
 import dev.jcob.launcher.data.Photos
@@ -425,7 +426,7 @@ private fun AppRow(
                     width = config.appCardWidth.dp,
                     zoom = zoom,
                     shape = RoundedCornerShape(config.appCornerRadius.dp),
-                    translucent = config.translucentCards,
+                    style = config.cardStyle,
                     focused = focused,
                     highlighted = isMoving,
                     onClick = { if (moving != null) onMoveDone() else onLaunch(app) },
@@ -462,51 +463,67 @@ private fun AppCard(
     width: Dp,
     zoom: Float,
     shape: Shape,
-    translucent: Boolean,
+    style: CardStyle,
     focused: Boolean,
     highlighted: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Translucent cards let the wallpaper show through: glassy fill, faded banner, light edge.
-    val contentAlpha = if (!translucent || focused) 1f else 0.7f
+    val height = width * 9 / 16
+    // Translucent and logo-only cards let the wallpaper show through, so dim them until focused.
+    val contentAlpha = when {
+        focused || style == CardStyle.SOLID -> 1f
+        style == CardStyle.LOGO -> 0.85f
+        else -> 0.7f
+    }
     Surface(
         onClick = onClick,
         onLongClick = onLongClick,
         scale = ClickableSurfaceDefaults.scale(focusedScale = zoom),
         shape = ClickableSurfaceDefaults.shape(shape),
-        colors = if (translucent) {
-            ClickableSurfaceDefaults.colors(
-                containerColor = Color.Black.copy(alpha = 0.3f),
-                focusedContainerColor = Color.White.copy(alpha = 0.2f),
-            )
-        } else {
-            ClickableSurfaceDefaults.colors(
+        colors = when (style) {
+            CardStyle.SOLID -> ClickableSurfaceDefaults.colors(
                 containerColor = Color(0xFF2B2A33),
                 focusedContainerColor = Color(0xFF3A3944),
             )
+            CardStyle.TRANSLUCENT -> ClickableSurfaceDefaults.colors(
+                containerColor = Color.Black.copy(alpha = 0.3f),
+                focusedContainerColor = Color.White.copy(alpha = 0.2f),
+            )
+            CardStyle.LOGO -> ClickableSurfaceDefaults.colors(
+                containerColor = Color.Transparent,
+                focusedContainerColor = Color.White.copy(alpha = 0.15f),
+            )
         },
-        border = if (translucent) {
-            ClickableSurfaceDefaults.border(
+        border = when (style) {
+            CardStyle.SOLID -> ClickableSurfaceDefaults.border()
+            CardStyle.TRANSLUCENT -> ClickableSurfaceDefaults.border(
                 border = Border(BorderStroke(1.dp, Color.White.copy(alpha = 0.15f)), shape = shape),
                 focusedBorder = Border(BorderStroke(2.dp, Color.White.copy(alpha = 0.8f)), shape = shape),
             )
-        } else {
-            ClickableSurfaceDefaults.border()
+            CardStyle.LOGO -> ClickableSurfaceDefaults.border(
+                focusedBorder = Border(BorderStroke(2.dp, Color.White.copy(alpha = 0.8f)), shape = shape),
+            )
         },
-        modifier = modifier.size(width, width * 9 / 16),
+        modifier = modifier.size(width, height),
     ) {
-        if (app.banner != null) {
-            Image(
+        when {
+            style == CardStyle.LOGO -> Image(
+                app.logo,
+                contentDescription = app.label,
+                contentScale = ContentScale.Fit,
+                alpha = contentAlpha,
+                modifier = Modifier.fillMaxSize().padding(horizontal = width * 0.15f, vertical = height * 0.15f),
+            )
+            app.banner != null -> Image(
                 app.banner,
                 contentDescription = app.label,
                 contentScale = ContentScale.Crop,
                 alpha = contentAlpha,
                 modifier = Modifier.fillMaxSize(),
             )
-        } else {
-            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            else -> Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 Image(app.icon, contentDescription = null, alpha = contentAlpha, modifier = Modifier.size(width / 4))
                 Text(
                     app.label,

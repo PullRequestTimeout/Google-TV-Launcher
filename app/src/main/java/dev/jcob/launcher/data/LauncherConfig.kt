@@ -13,6 +13,15 @@ enum class HomeMode {
 }
 
 @Serializable
+enum class CardStyle {
+    SOLID,
+    /** Faded banner on a glassy card so the wallpaper shows through. */
+    TRANSLUCENT,
+    /** No card at all, just the app's logo. */
+    LOGO,
+}
+
+@Serializable
 data class Category(val id: String, val name: String)
 
 /** Everything the user can customise. Also the backup/export format. */
@@ -41,7 +50,7 @@ data class LauncherConfig(
     val appFocusZoom: Int = 110,
     val appCornerRadius: Int = 12,
     val showAppLabel: Boolean = true,
-    val translucentCards: Boolean = true,
+    val cardStyle: CardStyle = CardStyle.TRANSLUCENT,
     /** Gap between the row and the bottom of the screen, in dp. */
     val appRowBottom: Int = 40,
 

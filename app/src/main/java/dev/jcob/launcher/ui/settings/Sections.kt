@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.jcob.launcher.data.CardStyle
 import dev.jcob.launcher.data.Category
 import dev.jcob.launcher.data.HomeMode
 import dev.jcob.launcher.data.Pin
@@ -75,9 +76,12 @@ private fun CustomiseSection(ctx: SectionContext) {
             listOf(96 to "Extra small", 128 to "Small", 160 to "Medium", 192 to "Large"),
             c.appCardWidth,
         ) { v -> ctx.update { it.copy(appCardWidth = v) } }
-        CycleRow("Card style", listOf(true to "Translucent", false to "Solid"), c.translucentCards) { v ->
-            ctx.update { it.copy(translucentCards = v) }
-        }
+        CycleRow(
+            "Card style",
+            listOf(CardStyle.TRANSLUCENT to "Translucent", CardStyle.SOLID to "Solid", CardStyle.LOGO to "Logo only"),
+            c.cardStyle,
+            subtitle = if (c.cardStyle == CardStyle.LOGO) "Apps without a separate logo show their normal icon" else null,
+        ) { v -> ctx.update { it.copy(cardStyle = v) } }
         CycleRow(
             "Spacing",
             listOf(10 to "Tight", 20 to "Normal", 32 to "Wide"),

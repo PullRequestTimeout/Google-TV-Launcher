@@ -5,3 +5,7 @@ local.properties
 .idea/
 scripts/.target
 launcher-config.json
+
+# Wallpaper photos are personal; add your own and run scripts/prepare-photos.ps1.
+photos/
+app/src/main/assets/photos/

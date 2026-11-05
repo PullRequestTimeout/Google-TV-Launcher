@@ -499,7 +499,6 @@ private fun AppCard(
         border = when (style) {
             CardStyle.SOLID -> ClickableSurfaceDefaults.border()
             CardStyle.TRANSLUCENT -> ClickableSurfaceDefaults.border(
-                border = Border(BorderStroke(1.dp, Color.White.copy(alpha = 0.15f)), shape = shape),
                 focusedBorder = Border(BorderStroke(2.dp, Color.White.copy(alpha = 0.8f)), shape = shape),
             )
             CardStyle.LOGO -> ClickableSurfaceDefaults.border(

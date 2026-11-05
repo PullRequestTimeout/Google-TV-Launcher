@@ -225,7 +225,7 @@ private fun TvSection(ctx: SectionContext) {
 
     Column {
         SectionHeader("HDMI-CEC")
-        SettingRow("Turn TV off", icon = Icons.Outlined.PowerSettingsNew, subtitle = "Sleeps the Chromecast; the TV follows over HDMI-CEC",
+        SettingRow("Turn TV off", icon = Icons.Outlined.PowerSettingsNew, subtitle = "Sleeps this device; the TV follows over HDMI-CEC",
             onClick = { run("TV off") { tv.tvOff() } })
         SettingRow("Turn TV on / switch to this input", icon = Icons.Outlined.Tv, onClick = { run("TV on") { tv.tvOn() } })
         SettingRow("TV input menu", icon = Icons.Outlined.Input, subtitle = "Asks the TV to show its input picker. Not every TV supports this.",
@@ -252,12 +252,12 @@ private fun TvSection(ctx: SectionContext) {
             subtitle = "Turns the TV off after this long with no remote presses. You get a 60-second warning.",
         ) { hours -> ctx.update { it.copy(autoOffHours = hours) } }
 
-        SectionHeader("Chromecast")
-        SettingRow("Restart Chromecast", icon = Icons.Outlined.RestartAlt, onClick = { confirmRestart = true })
+        SectionHeader("Device")
+        SettingRow("Restart device", icon = Icons.Outlined.RestartAlt, onClick = { confirmRestart = true })
     }
 
     if (confirmRestart) {
-        ConfirmDialog("Restart the Chromecast?", "It takes about a minute to come back.", "Restart",
+        ConfirmDialog("Restart this device?", "It takes about a minute to come back.", "Restart",
             onConfirm = { confirmRestart = false; run("Restart") { tv.restart() } },
             onDismiss = { confirmRestart = false })
     }

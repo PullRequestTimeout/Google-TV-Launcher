@@ -6,7 +6,7 @@ class TvControl(private val shell: ShellClient) {
     suspend fun tvOn(): Boolean = ok("cmd hdmi_control onetouchplay")
 
     /**
-     * Puts the Chromecast to sleep. With CEC power_control_mode=broadcast (the default here) the
+     * Puts the device to sleep. With CEC power_control_mode=broadcast (the default here) the
      * TV goes to standby with it.
      */
     suspend fun tvOff(): Boolean = ok("input keyevent KEYCODE_SLEEP")
@@ -17,7 +17,7 @@ class TvControl(private val shell: ShellClient) {
     suspend fun restart(): Boolean = ok("svc power reboot")
 
     /**
-     * Turns the Chromecast's CEC stack off and on again. Samsung Anynet+ in particular tends to
+     * Turns the device's CEC stack off and on again. Samsung Anynet+ in particular tends to
      * stop answering after a while; re-announcing often brings the link back.
      */
     suspend fun resetCec(): Boolean = ok(

@@ -293,7 +293,7 @@ private fun WifiSection(ctx: SectionContext) {
         ConfirmDialog(
             title = "Forget ${network.ssid}?",
             message = if (isCurrent) {
-                "This is the network the Chromecast is using. It'll disconnect and you'll need the password to rejoin."
+                "This is the network this device is using. It'll disconnect and you'll need the password to rejoin."
             } else {
                 "You'll need the password to join it again."
             },

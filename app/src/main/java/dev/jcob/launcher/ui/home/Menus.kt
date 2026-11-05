@@ -124,7 +124,7 @@ fun QuickMenu(onDismiss: () -> Unit, onOpenWifi: () -> Unit) {
 
     if (confirmRestart) {
         ConfirmDialog(
-            title = "Restart the Chromecast?",
+            title = "Restart this device?",
             message = "It takes about a minute to come back.",
             confirmLabel = "Restart",
             onConfirm = { onDismiss(); runTv("Restart") { launcher.tv.restart() } },
@@ -154,7 +154,7 @@ fun QuickMenu(onDismiss: () -> Unit, onOpenWifi: () -> Unit) {
                 sleepAt = PowerTimers.sleepTimerAt(context)
             },
             MenuOption("Wi-Fi", Icons.Outlined.Wifi) { onDismiss(); onOpenWifi() },
-            MenuOption("Restart Chromecast", Icons.Outlined.RestartAlt) { confirmRestart = true },
+            MenuOption("Restart device", Icons.Outlined.RestartAlt) { confirmRestart = true },
         ),
         onDismiss = onDismiss,
     )

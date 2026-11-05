@@ -1,13 +1,19 @@
 package dev.jcob.launcher
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
 import dev.jcob.launcher.data.Pin
 import dev.jcob.launcher.ui.components.PinDialog
 import dev.jcob.launcher.ui.home.HomeScreen
@@ -23,21 +29,37 @@ class MainActivity : ComponentActivity() {
     private var pinFor by mutableStateOf<Section?>(null)
     private var pinError by mutableStateOf<String?>(null)
     private var unlocked = false
+    /** Bumped on screen off so the home screen starts fresh, with no menu or move mode left open. */
+    private var homeGeneration by mutableIntStateOf(0)
+
+    private val screenOff = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            settings = null
+            pinFor = null
+            pinError = null
+            homeGeneration++
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val app = application as LauncherApp
+        ContextCompat.registerReceiver(
+            this, screenOff, IntentFilter(Intent.ACTION_SCREEN_OFF), ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
         setContent {
             LauncherTheme {
                 val current = settings
                 if (current == null) {
                     // Back on the home screen has nowhere to go.
                     BackHandler {}
-                    HomeScreen(
-                        onLaunch = ::launch,
-                        onOpenSettings = { openSettings(Section.Customise) },
-                        onOpenWifi = { openSettings(Section.Wifi) },
-                    )
+                    key(homeGeneration) {
+                        HomeScreen(
+                            onLaunch = ::launch,
+                            onOpenSettings = { openSettings(Section.Customise) },
+                            onOpenWifi = { openSettings(Section.Wifi) },
+                        )
+                    }
                 } else {
                     BackHandler { settings = null }
                     SettingsScreen(initial = current)
@@ -80,6 +102,11 @@ class MainActivity : ComponentActivity() {
         super.onStop()
         // Re-lock once the user leaves the launcher.
         unlocked = false
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(screenOff)
+        super.onDestroy()
     }
 
     private fun launch(intent: Intent) {
